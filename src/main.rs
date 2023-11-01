@@ -18,5 +18,9 @@ fn main() {
     .unwrap()
     .into_json::<structs::Resp>()
     .unwrap();
-    println!("{:#?}", resp);
+
+    println!("Results for \"{}\":", args[1]);
+    for service in resp.parameters.services {
+        println!("  - {} ({})", service.name, service.id);
+    }
 }
