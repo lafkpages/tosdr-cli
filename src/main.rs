@@ -13,6 +13,9 @@ enum CliCommands {
     Search {
         #[clap(flatten)]
         args: CliSearchArgs,
+
+        #[clap(short, long, help = "Show output as JSON")]
+        json: bool,
     },
 }
 
@@ -32,7 +35,7 @@ fn main() {
     let cli = Cli::parse();
 
     match &cli.command {
-        CliCommands::Search { args } => {
+        CliCommands::Search { args, json } => {
             let was_domain = args.domain.is_some();
             let query = args
                 .query
@@ -42,12 +45,17 @@ fn main() {
 
             let resp = ureq::get(&format!("https://api.tosdr.org/search/v4/?query={}", query))
                 .call()
-                .unwrap()
-                .into_json::<structs::Resp>()
                 .unwrap();
 
+            if *json {
+                println!("{}", resp.into_string().unwrap());
+                return;
+            }
+
+            let resp_json = resp.into_json::<structs::Resp>().unwrap();
+
             println!("Results for \"{}\":", query);
-            for service in resp.parameters.services {
+            for service in resp_json.parameters.services {
                 if was_domain && !service.urls.contains(&query) {
                     continue;
                 }
