@@ -24,6 +24,7 @@ fn main() {
 
     println!("CLI: {:#?}", cli);
 
+    let was_domain = cli.args.domain.is_some();
     let query = cli
         .args
         .query
@@ -37,6 +38,10 @@ fn main() {
 
     println!("Results for \"{}\":", query);
     for service in resp.parameters.services {
+        if was_domain && !service.urls.contains(&query) {
+            continue;
+        }
+
         println!("  - {} ({})", service.name, service.id);
         println!("    - {}", service.rating.human);
         println!("    - URLs:");
