@@ -10,11 +10,11 @@ struct CliArgs {
 #[derive(Parser, Debug)]
 #[group(required = true, multiple = false)]
 struct CliArgsGroup {
-    #[clap(short, long)]
-    query: Option<String>,
-
-    #[clap(short, long)]
+    #[clap(short, long, help = "Search for a service by domain")]
     domain: Option<String>,
+
+    #[clap(short, long, help = "Search for services")]
+    query: Option<String>,
 }
 
 mod structs;
