@@ -2,22 +2,22 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct Resp {
-    error: u16,
-    message: String,
-    parameters: RespParameters,
+    pub error: u16,
+    pub message: String,
+    pub parameters: RespParameters,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct RespParameters {
-    services: Vec<RespService>,
+    pub services: Vec<RespService>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct RespService {
-    id: u32,
-    name: String,
-    slug: String,
-    is_comprehensively_reviewed: bool,
-    urls: Vec<String>,
-    wikipedia: String,
+    pub id: u32,
+    pub name: String,
+    pub slug: String,
+    pub is_comprehensively_reviewed: bool,
+    pub urls: Vec<String>,
+    pub wikipedia: String,
 }
