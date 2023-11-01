@@ -18,5 +18,5 @@ fn main() {
     .unwrap()
     .into_json::<structs::Resp>()
     .unwrap();
-    println!("{:?}", resp);
+    println!("{:#?}", resp);
 }
