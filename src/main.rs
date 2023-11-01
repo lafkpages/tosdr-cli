@@ -22,8 +22,6 @@ mod structs;
 fn main() {
     let cli = CliArgs::parse();
 
-    println!("CLI: {:#?}", cli);
-
     let was_domain = cli.args.domain.is_some();
     let query = cli
         .args
