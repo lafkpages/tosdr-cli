@@ -21,6 +21,7 @@ struct RespService {
     slug: String,
     is_comprehensively_reviewed: bool,
     urls: Vec<String>,
+    wikipedia: String,
 }
 
 fn main() {
