@@ -1,15 +1,24 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
-struct CliArgs {
-    #[clap(flatten)]
-    args: CliArgsGroup,
+#[command(propagate_version = true)]
+struct Cli {
+    #[command(subcommand)]
+    command: CliCommands,
+}
+
+#[derive(Subcommand, Debug)]
+enum CliCommands {
+    Search {
+        #[clap(flatten)]
+        args: CliSearchArgs,
+    },
 }
 
 #[derive(Parser, Debug)]
 #[group(required = true, multiple = false)]
-struct CliArgsGroup {
+struct CliSearchArgs {
     #[clap(short, long, help = "Search for a service by domain")]
     domain: Option<String>,
 
@@ -20,32 +29,37 @@ struct CliArgsGroup {
 mod structs;
 
 fn main() {
-    let cli = CliArgs::parse();
+    let cli = Cli::parse();
 
-    let was_domain = cli.args.domain.is_some();
-    let query = cli
-        .args
-        .query
-        .unwrap_or(unsafe { cli.args.domain.unwrap_unchecked() });
+    match &cli.command {
+        CliCommands::Search { args } => {
+            let was_domain = args.domain.is_some();
+            let query = args
+                .query
+                .clone()
+                .unwrap_or(unsafe { args.domain.clone().unwrap_unchecked() });
+            // TODO: there should be a better way to do this than cloning
 
-    let resp = ureq::get(&format!("https://api.tosdr.org/search/v4/?query={}", query))
-        .call()
-        .unwrap()
-        .into_json::<structs::Resp>()
-        .unwrap();
+            let resp = ureq::get(&format!("https://api.tosdr.org/search/v4/?query={}", query))
+                .call()
+                .unwrap()
+                .into_json::<structs::Resp>()
+                .unwrap();
 
-    println!("Results for \"{}\":", query);
-    for service in resp.parameters.services {
-        if was_domain && !service.urls.contains(&query) {
-            continue;
+            println!("Results for \"{}\":", query);
+            for service in resp.parameters.services {
+                if was_domain && !service.urls.contains(&query) {
+                    continue;
+                }
+
+                println!("  - {} ({})", service.name, service.id);
+                println!("    - {}", service.rating.human);
+                println!("    - URLs:");
+                for url in service.urls {
+                    println!("      - {}", url);
+                }
+                println!("    - Wikipedia: {}", service.wikipedia);
+            }
         }
-
-        println!("  - {} ({})", service.name, service.id);
-        println!("    - {}", service.rating.human);
-        println!("    - URLs:");
-        for url in service.urls {
-            println!("      - {}", url);
-        }
-        println!("    - Wikipedia: {}", service.wikipedia);
     }
 }
