@@ -20,4 +20,12 @@ pub struct RespService {
     pub is_comprehensively_reviewed: bool,
     pub urls: Vec<String>,
     pub wikipedia: String,
+    pub rating: RespServiceRating,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct RespServiceRating {
+    pub hex: u8,
+    pub human: String,
+    pub letter: String,
 }
