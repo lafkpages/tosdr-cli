@@ -23,5 +23,9 @@ fn main() {
     for service in resp.parameters.services {
         println!("  - {} ({})", service.name, service.id);
         println!("    - {}", service.rating.human);
+        println!("    - URLs:");
+        for url in service.urls {
+            println!("      - {}", url);
+        }
     }
 }
