@@ -22,5 +22,6 @@ fn main() {
     println!("Results for \"{}\":", args[1]);
     for service in resp.parameters.services {
         println!("  - {} ({})", service.name, service.id);
+        println!("    - {}", service.rating.human);
     }
 }
