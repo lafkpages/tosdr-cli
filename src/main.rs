@@ -1,3 +1,5 @@
+use std::env;
+
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
@@ -22,9 +24,16 @@ struct RespService {
 }
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() < 2 {
+        println!("Usage: tosdr <domain>");
+        return;
+    }
+
     let resp = ureq::get(&format!(
         "https://api.tosdr.org/search/v4/?query={}",
-        "github.com"
+        args[1]
     ))
     .call()
     .unwrap()
