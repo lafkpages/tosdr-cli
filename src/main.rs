@@ -1,28 +1,6 @@
 use std::env;
 
-use serde::Deserialize;
-
-#[derive(Deserialize, Debug)]
-struct Resp {
-    error: u16,
-    message: String,
-    parameters: RespParameters,
-}
-
-#[derive(Deserialize, Debug)]
-struct RespParameters {
-    services: Vec<RespService>,
-}
-
-#[derive(Deserialize, Debug)]
-struct RespService {
-    id: u32,
-    name: String,
-    slug: String,
-    is_comprehensively_reviewed: bool,
-    urls: Vec<String>,
-    wikipedia: String,
-}
+mod structs;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -38,7 +16,7 @@ fn main() {
     ))
     .call()
     .unwrap()
-    .into_json::<Resp>()
+    .into_json::<structs::Resp>()
     .unwrap();
     println!("{:?}", resp);
 }
