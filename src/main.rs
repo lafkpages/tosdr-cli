@@ -27,5 +27,6 @@ fn main() {
         for url in service.urls {
             println!("      - {}", url);
         }
+        println!("    - Wikipedia: {}", service.wikipedia);
     }
 }
