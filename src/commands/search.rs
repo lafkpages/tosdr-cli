@@ -35,6 +35,7 @@ pub fn main(args: &CliSearchArgs, json: &bool) {
                             println!("      - {}", url);
                         }
                         println!("    - Wikipedia: {}", service.wikipedia);
+                        println!("    - ToS;DR: {}", service.links.crisp.service)
                     }
                 }
 
