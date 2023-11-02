@@ -52,7 +52,7 @@ fn main() {
                 return;
             }
 
-            let resp_json = resp.into_json::<structs::Resp>().unwrap();
+            let resp_json = resp.into_json::<structs::SearchApiResponse>().unwrap();
 
             println!("Results for \"{}\":", query);
             for service in resp_json.parameters.services {
