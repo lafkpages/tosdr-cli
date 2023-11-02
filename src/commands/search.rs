@@ -1,5 +1,5 @@
+use tosdr_cli::api::structs;
 use tosdr_cli::cli::CliSearchArgs;
-use tosdr_cli::structs;
 
 pub fn main(args: &CliSearchArgs, json: &bool) {
     let was_domain = args.domain.is_some();
