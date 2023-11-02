@@ -17,6 +17,14 @@ pub enum CliCommands {
         #[clap(short, long, help = "Show output as JSON")]
         json: bool,
     },
+
+    Points {
+        #[clap(short, long, help = "The service ID to get points for")]
+        service_id: u32,
+
+        #[clap(short, long, help = "Show output as JSON")]
+        json: bool,
+    },
 }
 
 #[derive(Parser, Debug)]

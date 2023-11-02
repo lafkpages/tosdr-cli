@@ -1,10 +1,13 @@
 use serde::Deserialize;
 
+pub type SearchApiResponse = ApiResponse<SearchApiResponseParameters>;
+pub type ServiceApiResponse = ApiResponse<Service<u8>>;
+
 #[derive(Deserialize, Debug)]
-pub struct SearchApiResponse {
+pub struct ApiResponse<Parameters> {
     pub error: u16,
     pub message: String,
-    pub parameters: SearchApiResponseParameters,
+    pub parameters: Parameters,
 }
 
 #[derive(Deserialize, Debug)]
@@ -13,15 +16,32 @@ pub struct SearchApiResponseParameters {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct Service {
+pub struct Service<Rating: ServiceRatingString = ServiceRating> {
     pub id: u32,
     pub name: String,
     pub slug: String,
     pub is_comprehensively_reviewed: bool,
     pub urls: Vec<String>,
     pub wikipedia: String,
-    pub rating: ServiceRating,
-    pub links: ServiceLinks,
+    pub rating: Rating,
+    pub links: Option<ServiceLinks>,
+    pub points: Option<Vec<ServicePoint>>,
+}
+
+pub trait ServiceRatingString {
+    fn to_rating_string(self) -> String;
+}
+
+impl ServiceRatingString for ServiceRating {
+    fn to_rating_string(self) -> String {
+        self.human
+    }
+}
+
+impl ServiceRatingString for u8 {
+    fn to_rating_string(self) -> String {
+        self.to_string()
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -56,4 +76,13 @@ pub struct ServicePhoenixLinks {
     pub documents: String,
     pub new_comment: String,
     pub edit: String,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct ServicePoint {
+    pub id: u32,
+    pub title: String,
+    pub source: Option<String>,
+    pub status: String, // TODO: 'declined' | 'approved' | 'pending'?
+    pub case_id: u32,
 }

@@ -11,5 +11,9 @@ fn main() {
         cli::CliCommands::Search { args, json } => {
             commands::search::main(&args, &json);
         }
+
+        cli::CliCommands::Points { service_id, json } => {
+            commands::points::main(service_id, &json);
+        }
     }
 }
