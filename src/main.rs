@@ -72,7 +72,7 @@ fn main() {
                 }
 
                 Err(error) => {
-                    println!("Error: {}", error)
+                    println!("Error requesting ToS;DR API: {}", error)
                 }
             }
         }
