@@ -1,4 +1,4 @@
-use tosdr_cli::api::structs;
+use tosdr_cli::api::{request, request_json, structs};
 use tosdr_cli::cli::CliSearchArgs;
 use tosdr_cli::print_service;
 
@@ -10,37 +10,22 @@ pub fn main(args: &CliSearchArgs, json: &bool) {
         .unwrap_or(args.domain.clone().unwrap_or("".to_string()));
     // TODO: there should be a better way to do this than cloning
 
-    let request = ureq::get(&format!("https://api.tosdr.org/search/v4/?query={}", query)).call();
+    let url = format!("https://api.tosdr.org/search/v4/?query={}", query);
 
-    match request {
-        Ok(response) => {
-            if *json {
-                println!("{}", response.into_string().unwrap());
-                return;
-            }
+    if *json {
+        let response = request(url);
+        println!("{}", response.into_string().unwrap());
+        return;
+    }
 
-            let response_json = response.into_json::<structs::SearchApiResponse>();
+    let response_json = request_json::<structs::SearchApiResponse>(url);
 
-            match response_json {
-                Ok(response_json) => {
-                    println!("Results for \"{}\":", query);
-                    for service in response_json.parameters.services {
-                        if was_domain && !service.urls.contains(&query) {
-                            continue;
-                        }
-
-                        print_service(service);
-                    }
-                }
-
-                Err(error) => {
-                    println!("Error parsing ToS;DR API response: {}", error);
-                }
-            }
+    println!("Results for \"{}\":", query);
+    for service in response_json.parameters.services {
+        if was_domain && !service.urls.contains(&query) {
+            continue;
         }
 
-        Err(error) => {
-            println!("Error requesting ToS;DR API: {}", error);
-        }
+        print_service(service);
     }
 }
