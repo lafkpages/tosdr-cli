@@ -1,5 +1,6 @@
 use tosdr_cli::api::structs;
 use tosdr_cli::cli::CliSearchArgs;
+use tosdr_cli::print_service;
 
 pub fn main(args: &CliSearchArgs, json: &bool) {
     let was_domain = args.domain.is_some();
@@ -28,14 +29,7 @@ pub fn main(args: &CliSearchArgs, json: &bool) {
                             continue;
                         }
 
-                        println!("  - {} ({})", service.name, service.id);
-                        println!("    - {}", service.rating.human);
-                        println!("    - URLs:");
-                        for url in service.urls {
-                            println!("      - {}", url);
-                        }
-                        println!("    - Wikipedia: {}", service.wikipedia);
-                        println!("    - ToS;DR: {}", service.links.crisp.service)
+                        print_service(service);
                     }
                 }
 
