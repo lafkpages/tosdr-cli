@@ -53,26 +53,34 @@ fn main() {
                         return;
                     }
 
-                    let response_json = response.into_json::<structs::SearchApiResponse>().unwrap();
+                    let response_json = response.into_json::<structs::SearchApiResponse>();
 
-                    println!("Results for \"{}\":", query);
-                    for service in response_json.parameters.services {
-                        if was_domain && !service.urls.contains(&query) {
-                            continue;
+                    match response_json {
+                        Ok(response_json) => {
+                            println!("Results for \"{}\":", query);
+                            for service in response_json.parameters.services {
+                                if was_domain && !service.urls.contains(&query) {
+                                    continue;
+                                }
+
+                                println!("  - {} ({})", service.name, service.id);
+                                println!("    - {}", service.rating.human);
+                                println!("    - URLs:");
+                                for url in service.urls {
+                                    println!("      - {}", url);
+                                }
+                                println!("    - Wikipedia: {}", service.wikipedia);
+                            }
                         }
 
-                        println!("  - {} ({})", service.name, service.id);
-                        println!("    - {}", service.rating.human);
-                        println!("    - URLs:");
-                        for url in service.urls {
-                            println!("      - {}", url);
+                        Err(error) => {
+                            println!("Error parsing ToS;DR API response: {}", error);
                         }
-                        println!("    - Wikipedia: {}", service.wikipedia);
                     }
                 }
 
                 Err(error) => {
-                    println!("Error requesting ToS;DR API: {}", error)
+                    println!("Error requesting ToS;DR API: {}", error);
                 }
             }
         }
