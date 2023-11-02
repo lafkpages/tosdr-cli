@@ -40,7 +40,7 @@ fn main() {
             let query = args
                 .query
                 .clone()
-                .unwrap_or(unsafe { args.domain.clone().unwrap_unchecked() });
+                .unwrap_or(args.domain.clone().unwrap_or("".to_string()));
             // TODO: there should be a better way to do this than cloning
 
             let request =
