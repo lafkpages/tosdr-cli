@@ -43,30 +43,37 @@ fn main() {
                 .unwrap_or(unsafe { args.domain.clone().unwrap_unchecked() });
             // TODO: there should be a better way to do this than cloning
 
-            let resp = ureq::get(&format!("https://api.tosdr.org/search/v4/?query={}", query))
-                .call()
-                .unwrap();
+            let request =
+                ureq::get(&format!("https://api.tosdr.org/search/v4/?query={}", query)).call();
 
-            if *json {
-                println!("{}", resp.into_string().unwrap());
-                return;
-            }
+            match request {
+                Ok(response) => {
+                    if *json {
+                        println!("{}", response.into_string().unwrap());
+                        return;
+                    }
 
-            let resp_json = resp.into_json::<structs::SearchApiResponse>().unwrap();
+                    let response_json = response.into_json::<structs::SearchApiResponse>().unwrap();
 
-            println!("Results for \"{}\":", query);
-            for service in resp_json.parameters.services {
-                if was_domain && !service.urls.contains(&query) {
-                    continue;
+                    println!("Results for \"{}\":", query);
+                    for service in response_json.parameters.services {
+                        if was_domain && !service.urls.contains(&query) {
+                            continue;
+                        }
+
+                        println!("  - {} ({})", service.name, service.id);
+                        println!("    - {}", service.rating.human);
+                        println!("    - URLs:");
+                        for url in service.urls {
+                            println!("      - {}", url);
+                        }
+                        println!("    - Wikipedia: {}", service.wikipedia);
+                    }
                 }
 
-                println!("  - {} ({})", service.name, service.id);
-                println!("    - {}", service.rating.human);
-                println!("    - URLs:");
-                for url in service.urls {
-                    println!("      - {}", url);
+                Err(error) => {
+                    println!("Error: {}", error)
                 }
-                println!("    - Wikipedia: {}", service.wikipedia);
             }
         }
     }
